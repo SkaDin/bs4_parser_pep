@@ -23,10 +23,12 @@ git@github.com:SkaDin/bs4_parser_pep.git
 ```
 cd bs4_parser_pep
 ```
-2. Активировать виртуальное окружение:
+2. Создать и активировать виртуальное окружение:
 ```
 pytnon -m venv venv
+source venv/Scripts/activate
 ```
+
 3. Установить зависимости из файла requirements.txt:
 ```
 pip install -r requirements.txt
