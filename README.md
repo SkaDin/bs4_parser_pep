@@ -28,9 +28,9 @@ cd bs4_parser_pep
 pip install -r requirements.txt
 ```
    * При необходимости обновить pip
-    ```
-    python3 -m pip install --upgrade pip
-    ```
+   ```
+   python3 -m pip install --upgrade pip
+   ```
 
 ## Примеры команд:
 * Вывод ссылок o нововведениях в Python:
