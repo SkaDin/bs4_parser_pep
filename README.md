@@ -42,10 +42,12 @@ python main.py whats-new
 python main.py pep -o file
 ```
 * Создание таблицы о статусах версий:
-```python main.py latest-versions -o pretty
+```
+python main.py latest-versions -o pretty
 ```
 ### Для более детального изучения команд можно обратиться так:
-```python main.py -h
 ```
-## Автор проекта SkaDin(Сушков Денис)
+python main.py -h
+```
+## Автор проекта: SkaDin(Сушков Денис)
 
