@@ -11,6 +11,7 @@ from utils import get_response, find_tag
 
 
 def whats_new(session):
+    """Функция вывода нововведений в Python."""
     result = [('Ссылка на статью', 'Заголовок', 'Редактор, Автор')]
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
     response = get_response(session, whats_new_url)
@@ -42,6 +43,7 @@ def whats_new(session):
 
 
 def latest_versions(session):
+    """Функция вывода статусов версий Python."""
     result = [('Ссылка на документацию', 'Версия', 'Статус')]
     response = get_response(session, MAIN_DOC_URL)
     soup = BeautifulSoup(response.text, 'lxml')
@@ -68,28 +70,30 @@ def latest_versions(session):
 
 
 def pep(session):
+    """Функция прасинга документов PEP."""
     result = [('Статус', 'Количество')]
     response = get_response(session, PEP_URL)
     soup = BeautifulSoup(response.text, 'lxml')
-    step_two = find_tag(soup, 'section', attrs={'id': 'index-by-category'})
-    step_three = step_two.find_all('tr')
-    for step in tqdm(step_three):
+    index_by = find_tag(soup, 'section', attrs={'id': 'index-by-category'})
+    index_by_tr = index_by.find_all('tr')
+    for step in tqdm(index_by_tr):
         version_a_tag = step.find('a')
         if version_a_tag is None:
             continue
-        status1 = find_tag(step, 'abbr')
-        status_fin = status1['title'].split(', ')
+        status_cart = find_tag(step, 'abbr')['title'].split(', ')
         href = version_a_tag['href']
         version_link = urljoin(PEP_URL, href)
         response = get_response(session, version_link)
         soup = BeautifulSoup(response.text, 'lxml')
-        status_fin2 = find_tag(soup, 'abbr').text
-        EXPECTED_STATUS[status_fin[1]] = EXPECTED_STATUS.get(status_fin[1], 0) + 1
-        if status_fin[1] != status_fin2:
+        status_general_table = find_tag(soup, 'abbr').text
+        EXPECTED_STATUS[status_cart[1]] = (
+                EXPECTED_STATUS.get(status_cart[1], 0) + 1
+        )
+        if status_cart[1] != status_general_table:
             logging.info(
                 f'Несовпадающие статусы: {version_link} '
-                f'статус в карторчке: {status_fin2} '
-                f'Ожидаемый статус: {status_fin[1]} '
+                f'Статус в карторчке: {status_general_table} '
+                f'Ожидаемый статус: {status_cart[1]} '
             )
     for key, value in EXPECTED_STATUS.items():
         result.append([key, EXPECTED_STATUS[key]])
@@ -99,20 +103,24 @@ def pep(session):
 
 
 def download(session):
-    """Функция загрузки документации в zip файл."""
+    """Функция скачивания архива с документацией."""
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
     response = get_response(session, downloads_url)
     if response is None:
         return
-    downloads_dir = BASE_DIR / 'downloads'
-    downloads_dir.mkdir(exist_ok=True)
     soup = BeautifulSoup(response.text, features='lxml')
     main_tag = find_tag(soup, 'div', attrs={'role': 'main'})
     table_tag = find_tag(main_tag, 'table', attrs={'class': 'docutils'})
-    pdf_a4_tag = find_tag(table_tag, 'a', attrs={'href': re.compile(r'.+pdf-a4\.zip$')})
+    pdf_a4_tag = find_tag(
+        table_tag,
+        'a',
+        attrs={'href': re.compile(r'.+pdf-a4\.zip$')}
+    )
     pdf_a4_link = pdf_a4_tag['href']
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
+    downloads_dir = BASE_DIR / 'downloads'
+    downloads_dir.mkdir(exist_ok=True)
     archive_path = downloads_dir / filename
     response = session.get(archive_url)
 
@@ -130,6 +138,7 @@ MODE_TO_FUNCTION = {
 
 
 def main():
+    """Основная логика программы."""
     configure_logging()
     logging.info('Парсер запущен!')
     arg_parser = configure_argument_parser(MODE_TO_FUNCTION.keys())
