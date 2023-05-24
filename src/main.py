@@ -1,13 +1,15 @@
 import logging
 import re
+from urllib.parse import urljoin
+
 import requests_cache
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from urllib.parse import urljoin
+
 from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL, EXPECTED_STATUS
 from configs import configure_argument_parser, configure_logging
 from outputs import control_output
-from utils import get_response, find_tag
+from utils import find_tag, get_response
 
 
 def whats_new(session):
@@ -95,10 +97,8 @@ def pep(session):
                 f'Статус в карторчке: {status_general_table} '
                 f'Ожидаемый статус: {status_cart[1]} '
             )
-    for key, value in EXPECTED_STATUS.items():
-        result.append([key, EXPECTED_STATUS[key]])
-        if key == 'Draft':
-            result.append(['Total', sum(EXPECTED_STATUS.values())])
+    result.extend(EXPECTED_STATUS.items())
+    result.append(('Total', sum(EXPECTED_STATUS.values())))
     return result
 
 

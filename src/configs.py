@@ -1,7 +1,8 @@
 import argparse
 import logging
-from constants import BASE_DIR
 from logging.handlers import RotatingFileHandler
+
+from constants import BASE_DIR
 
 
 LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
