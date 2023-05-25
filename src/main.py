@@ -74,6 +74,8 @@ def latest_versions(session):
 def pep(session):
     """Функция прасинга документов PEP."""
     result = [('Статус', 'Количество')]
+    # Создаём копию константы, что бы не изменять саму константу.
+    expected_status = EXPECTED_STATUS.copy()
     response = get_response(session, PEP_URL)
     soup = BeautifulSoup(response.text, 'lxml')
     index_by = find_tag(soup, 'section', attrs={'id': 'index-by-category'})
@@ -88,8 +90,8 @@ def pep(session):
         response = get_response(session, version_link)
         soup = BeautifulSoup(response.text, 'lxml')
         status_general_table = find_tag(soup, 'abbr').text
-        EXPECTED_STATUS[status_cart[1]] = (
-                EXPECTED_STATUS.get(status_cart[1], 0) + 1
+        expected_status[status_cart[1]] = (
+                expected_status.get(status_cart[1], 0) + 1
         )
         if status_cart[1] != status_general_table:
             logging.info(
@@ -97,8 +99,8 @@ def pep(session):
                 f'Статус в карторчке: {status_general_table} '
                 f'Ожидаемый статус: {status_cart[1]} '
             )
-    result.extend(EXPECTED_STATUS.items())
-    result.append(('Total', sum(EXPECTED_STATUS.values())))
+    result.extend(expected_status.items())
+    result.append(('Total', sum(expected_status.values())))
     return result
 
 
