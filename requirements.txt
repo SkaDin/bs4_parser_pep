@@ -1,6 +1,6 @@
 attrs==21.4.0
 beautifulsoup4==4.9.3
-certifi==2021.10.8
+certifi==2023.7.22
 chardet==4.0.0
 charset-normalizer==2.0.12
 flake8==4.0.1
